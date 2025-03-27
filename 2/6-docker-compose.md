@@ -4,7 +4,7 @@
 
 ### ✅ 개요
 
-Docker Compose는 다중 컨테이너 애플리케이션을 **단일 설정 파일(YAML)**로 관리할 수 있게 해주는 도구입니다.
+Docker Compose는 다중 컨테이너 애플리케이션을 **단일 설정 파일(YAML)** 로 관리할 수 있게 해주는 도구입니다.
 
 `docker run`, `docker build` 명령어를 반복하지 않고 **자동화된 오케스트레이션**을 제공합니다.
 
@@ -20,6 +20,7 @@ Docker Compose는 다중 컨테이너 애플리케이션을 **단일 설정 파�
 ## 2. Docker 명령어 기반 수동 실행 방식 (Before Compose)
 
 - docker-commands
+
   ```bash
   ---------------------
   Create Network
