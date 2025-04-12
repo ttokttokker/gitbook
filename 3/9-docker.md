@@ -107,7 +107,7 @@ CMD ["node", "app.js"]
 - 이미지에 코드 스냅샷을 복사하기 위해 COPY를 사용하세요
 - 모든 이미지가 추가적인 구성이나 코드 없이도 실행되도록 보장합니다
 
-## AWS & EC2 소개
+## 131. AWS & EC2 소개
 
 현재 로컬에서 만들어진 이미지파일을 리모트 서버에 올려 컨테이너에 실행 시켜야 합니다.
 그리하여 저희는 AWS에서 제공하는 EC2 서버를 사용할 것입니다. 
@@ -115,3 +115,61 @@ CMD ["node", "app.js"]
 로그인 이후 해당 URL 에서 인스턴스를 실행하면 됩니다.
 > https://us-east-1.console.aws.amazon.com/ec2/home?region=us-east-1#Home:
 
+## 132. EC2 인스턴스에 연결하기
+
+## 134. 가상 머신에 Docker 설치하기
+
+>sudo yum update -y
+을 통해서 리모트 머신의 필요한 모든 필수 패키지가 업데이트 됩니다.
+
+>sudo yum -y install docker
+위의 명령어를 통해서 docker 와 관련된 필수 패키지를 다운받을 수 있습니다.
+
+> sudo service docker start
+위의 명령어를 통해서 docker 서비스를 실행시킬 수 있습니다.
+
+## 136. 로컬 이미지를 클라우드로 푸시(push)하기
+현재 리모트 환경에서 docker 를 설치하였기 떄문에 해당 로컬 이미지를 리모트 환경에 다운받아야합니다.
+![image](https://github.com/user-attachments/assets/9db6f15e-f864-4bb7-9dca-4e43e1518acf)
+
+여기서 여러가지 옵션이 존재합니다.
+
+### 옵션1: 소스 코드 배포 (Deploy Source)
+
+1. 원격 머신(서버)에서 이미지 빌드
+2. 원격 머신으로 소스 코드 전송 후, docker build 실행하고 이어서 docker run 실행
+3. 불필요한 복잡성: 과정이 여러 단계이고 서버에서 해야 할 작업이 많아 복잡합니다.
+   
+### 옵션2: 빌드된 이미지 배포 (Deploy Built Image)
+
+1. 배포 전 (예: 로컬 개발 머신에서) 이미지 빌드 완료
+2. (원격 머신에서는) docker run 명령어만 실행
+3. 원격 서버의 불필요한 작업(빌드) 방지: 서버에서 직접 빌드하는 과정을 생략하여 서버 부하를 줄이고 작업을 단순화합니다.
+
+
+저희는 여기서 **옵션2** 를 쳬택하여 적용해보도록 하겠습니다
+
+먼저 .dockerignore 파일을 만들어 현재 올리지말아야 하는것들을 선정해줍니다.
+```docker
+node_modules
+Dockerfile
+*.pem
+```
+**비밀키**는 올라가면 안되기떄문에 이그노어 파일에 추가해줍니다 
+
+그 다음 도커허브에 접속하여 Repository 를 만들어 줍니다.
+
+다음으로 docker 이미지를 빌드해줍니다
+>docker build -t node-dep-example-1 .
+해당 이미지는 이제 Local 환경에 존재합니다.
+
+> docker tag node-dep-example-1 {사용자이름}/node-example-1
+해당 명렁어를 통해 태그를 등록해줍니다.
+
+> docker login
+해당 명령어를 통해서 도커를 로그인 한 이후
+
+>docker push {사용자이름}/node-example-1
+해당 명령어를 사용하여 repository에 업로드 해줍니다
+
+ ## 137. 앱 실행 & 게시하기 (EC2에서)
