@@ -173,3 +173,54 @@ Dockerfile
 해당 명령어를 사용하여 repository에 업로드 해줍니다
 
  ## 137. 앱 실행 & 게시하기 (EC2에서)
+
+다시 리모트 환경으로 돌아가 해당 환경에서 명령어를 쳐줍니다
+> sudo docker run -d --rm  -p 80:80 jongminhong844/node-example-1
+
+해당 명령어를 통해서 Repository에 존재하는 이미지를 다운받아 컨테이너를 실행할 수 있게 됩니다.
+
+그리하여 현재 Insatance 의 IP 주소로 URL을 통해서 들어가게 되면 요청이 거절 될 것입니다.
+
+왜냐하면 보안그룹에서 InBound 규칙이 SSH를 제외한 모든 포트의 요청을 막기 때문에 HTTP의 대한 요청을 허가 해줌으로써 Instance의 IP 주소를 통해 확인을 할 수 있습니다. 
+
+![image](https://github.com/user-attachments/assets/a022fde8-05c7-4b85-982e-f6327f5c0252)
+
+위와 같은 설정들을 통해서 리모트 환경에서 도커를 실행할 수 있다는것을 확인할 수 있었습니다.
+
+## 138.컨테이너/이미지 관리 & 업데이트
+현재 리모트 환경에서는 정상적으로 컨테이너가 작동중입니다 이제 로컬 환경에 존재하는 원시 코드파일을 수정하여 리모트 환경을 업데이트 하는 과정을 진행해보도록 하겠습니다.
+
+```html
+  <main>
+    <h1>This works!!!!!!</h1>
+    <h2>Congratulations, this app seems to run fine!</h2>
+  </main>
+```
+기존의 존재하는 welcome.html 파일의 일부를 수정하였습니다. 이 변경사항은 로컬과 리모트 환경 둘다 자동으로 반영되지 않습니다.
+
+이러한 변경사항을 리모트 서버에 업데이트 하는 방법은 매우 간단합니다 이미지를 다시 빌드하고 도커 허브에 올린 후 다시 업데이트 된 이미지를 사용하면 되는것입니다.
+
+> docker build -t node-dep-example-1 .
+
+명령어를 통해 이미지를 다시 빌드해줍니다
+
+>docker tag node-dep-example-1 {사용자 이름}/node-example-1
+
+태그를 다시 지정해줍니다
+
+>docker push {사용자 이름}/node-example-1
+
+해당 업데이트 된 파일을 도커 허브에 올려줍니다.
+
+이제 다시  EC2 서버에 접속하여 기존에 존재하던 컨테이너를 정지하고 최신 파일을 다운받아줍니다.
+>sudo docker pull jongminhong844/node-example-1
+
+다시 컨테이너를 실행시켜 줍니다.
+>sudo docker run -d --rm  -p 80:80 {사용자 이름}/node-example-1
+
+그렇게 하면 이제 변경된 사항이 적용된 사이트를 확인 할 수 있습니다.
+
+![image](https://github.com/user-attachments/assets/48b3f624-7c4b-4352-8b26-1aee219b9b3f)
+
+
+## 139.컨테이너/이미지 관리 & 업데이트
